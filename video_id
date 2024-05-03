@@ -43,7 +43,7 @@ def get_channel_video_ids_with_date_filter(api_key, channel_id, start_date, end_
     return video_ids
 
 # Set your YouTube API key
-api_key = "AIzaSyBvePw8k3k3FpQCauIZkyHEXbHKbk0w90Y"
+api_key = "YOUR API KEY"
 
 # Sony Music India channel ID
 sony_music_channel_id = "UC_A7K2dXFsTMAciGmnNxy-Q"
