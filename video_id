@@ -1,0 +1,61 @@
+import requests
+
+def get_channel_video_ids_with_date_filter(api_key, channel_id, start_date, end_date, max_results=50):
+    video_ids = []
+    page_token = None
+
+    while True:
+        # Construct URL for searching videos from the specified channel
+        url = f"https://www.googleapis.com/youtube/v3/search?part=id&channelId={channel_id}&maxResults={max_results}&type=video&key={api_key}"
+
+        # Include page token if available
+        if page_token:
+            url += f"&pageToken={page_token}"
+
+        # Include publishedAfter and publishedBefore parameters
+        url += f"&publishedAfter={start_date}&publishedBefore={end_date}"
+
+        # Make API request
+        response = requests.get(url)
+
+        # Check response status
+        if response.status_code == 200:
+            data = response.json()
+
+            # Check if there are any items
+            if 'items' in data and len(data['items']) > 0:
+                # Extract video IDs
+                video_ids.extend([item['id']['videoId'] for item in data['items']])
+
+                # Check if there are more pages
+                if 'nextPageToken' not in data:
+                    break  # Exit loop if no more pages
+                else:
+                    page_token = data['nextPageToken']  # Set page token for next request
+            else:
+                print("No videos found for the specified channel and date range.")
+                break
+        else:
+            print("Error fetching video IDs.")
+            print(response)
+            break  # Exit loop on error
+
+    return video_ids
+
+# Set your YouTube API key
+api_key = "AIzaSyBvePw8k3k3FpQCauIZkyHEXbHKbk0w90Y"
+
+# Sony Music India channel ID
+sony_music_channel_id = "UC_A7K2dXFsTMAciGmnNxy-Q"
+
+# Define start and end dates
+start_date = "2023-01-01T00:00:00Z"  # September 10th, 2013
+end_date = "2023-31-12T23:59:59Z"    # December 31st, 2013
+
+# Get Sony Music India video IDs posted between September 10th and December 31st, 2013
+sony_music_video_ids = get_channel_video_ids_with_date_filter(api_key, sony_music_channel_id, start_date, end_date)
+
+# Print the video IDs
+print("Sony Music India Video IDs posted between September 10th and December 31st, 2013:")
+print("\n".join(sony_music_video_ids))
+print(f"Total number of video IDs: {len(sony_music_video_ids)}")
